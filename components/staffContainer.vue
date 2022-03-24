@@ -47,17 +47,17 @@ export default {
     window.addEventListener('scroll', (ev) => {
       if (this.active) { return }
       this.active = true
+      const component = document.body.querySelector('#staffComponent')
+      const container = document.body.querySelector('#contestants')
+      if (window.scrollY === 0) {
+        component.classList.remove('scrolled')
+        container.style.transform = 'translateY(0)'
+      } else if (window.scrollY > 0 && !component.classList.contains('scrolled')) {
+        component.classList.add('scrolled')
+        container.style.transform = `translateY(${component.clientHeight + 16 + 'px'})`
+      }
       setTimeout(() => {
-        const component = document.body.querySelector('#staffComponent')
-        const container = document.body.querySelector('#contestants')
         this.active = false
-        if (window.scrollY === 0) {
-          component.classList.remove('scrolled')
-          container.style.transform = 'translateY(0)'
-        } else if (window.scrollY > 0 && !component.classList.contains('scrolled')) {
-          component.classList.add('scrolled')
-          container.style.transform = `translateY(${component.clientHeight + 16 + 'px'})`
-        }
       }, 10)
     })
   },
@@ -82,7 +82,7 @@ export default {
 #staffComponent {
   @apply w-full flex flex-col pb-2  bg-white;
   &.scrolled {
-    @apply fixed top-0 z-10 left-0;
+    @apply fixed top-0 z-10 left-0 p-2;
   }
   #controls {
     @apply w-full mx-auto grid items-center justify-center grid-cols-2 text-center gap-2;
