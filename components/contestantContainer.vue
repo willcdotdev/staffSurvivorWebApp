@@ -2,7 +2,7 @@
   <div id="contestants">
     <div
       v-for="(contestant,cindex) of all"
-      :id="contestant['Name'].replace(' ','').toLowerCase()"
+      :id="contestant['Name'].split(' ')[0].toLowerCase()"
       :key="`${cindex}contestant`"
       :class="`contestant ${team[contestant['Name'].split(' ')[0].toLowerCase()]} ${eliminated.includes(contestant['Name'].split(' ')[0]) ? 'eliminated' : ''}`"
     >
@@ -67,7 +67,7 @@ export default {
 
 <style scoped lang="scss">
 #contestants {
-  @apply w-full md:container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5;
+  @apply w-full md:container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 ;
   .contestant {
     @apply relative border flex-col flex;
     .biography {
@@ -78,16 +78,7 @@ export default {
       @apply text-center py-5 border m-1 text-white
     }
 
-    &.Taku {
-      @apply text-base;
-
-    }
-
-    &.Ika {
-      @apply text-base;
-    }
-
-    &.Vati {
+    &.Taku ,&.Ika , &.Vati {
       @apply text-base
     }
 

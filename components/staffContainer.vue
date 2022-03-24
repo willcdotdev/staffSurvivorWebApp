@@ -1,20 +1,22 @@
 <template>
   <div id="staffComponent">
-    <a id="staffHideButton" href="#" @click="toggleStaff">Toggle Staff List</a>
+    <div id="controls">
+      <a id="staffHideButton" href="#" @click="toggleStaff">Toggle Staff List</a>
+      <a id="all" href="#" @click="chooseFilter"><h2>All</h2></a>
+    </div>
     <div id="staffContainer">
       <div id="staff">
         <div v-for="(bets, name) of staff" :key="`${name}`" class="staffMember">
           <a href="#" @click="chooseFilter(name)"><h2>{{ name }}</h2></a>
           <div class="staffPicks">
             <div v-for="contestantName of bets" :key="`${contestantName}${name}`">
-              <p :class="`${team[contestantName.toLowerCase()]}`">
+              <a :href="`#${contestantName.toLowerCase()}`" :class="`${team[contestantName.toLowerCase()]}`" @click="jumpTo">
                 {{ contestantName }}
-              </p>
+              </a>
             </div>
           </div>
         </div>
       </div>
-      <a id="all" href="#" @click="chooseFilter"><h2>All</h2></a>
     </div>
   </div>
 </template>
@@ -35,14 +37,42 @@ export default {
         return {}
       }
     }
-
+  },
+  data () {
+    return {
+      active: false
+    }
+  },
+  mounted () {
+    window.addEventListener('scroll', (ev) => {
+      if (this.active) { return }
+      this.active = true
+      setTimeout(() => {
+        const component = document.body.querySelector('#staffComponent')
+        const container = document.body.querySelector('#contestants')
+        this.active = false
+        if (window.scrollY === 0) {
+          component.classList.remove('scrolled')
+          container.style.transform = 'translateY(0)'
+        } else if (window.scrollY > 0 && !component.classList.contains('scrolled')) {
+          component.classList.add('scrolled')
+          container.style.transform = `translateY(${component.clientHeight + 16 + 'px'})`
+        }
+      }, 10)
+    })
   },
   methods: {
     chooseFilter (name) {
       this.$emit('chooseFilter', name)
     },
-    toggleStaff () {
-      document.body.querySelector('#staffContainer').classList.toggle('hidden')
+    toggleStaff (ev) {
+      ev.preventDefault()
+      const container = document.body.querySelector('#staffContainer')
+      container.classList.toggle('hidden')
+    },
+    jumpTo () {
+      const container = document.body.querySelector('#staffContainer')
+      container.classList.toggle('hidden')
     }
   }
 }
@@ -50,44 +80,48 @@ export default {
 
 <style scoped lang="scss">
 #staffComponent {
-  @apply w-full flex flex-col p-2;
+  @apply w-full flex flex-col pb-2  bg-white;
+  &.scrolled {
+    @apply fixed top-0 z-10 left-0;
+  }
+  #controls {
+    @apply w-full mx-auto grid items-center justify-center grid-cols-2 text-center gap-2;
+    a {
+      @apply border bg-gray-100 p-4 hover:bg-gray-300
+    }
+  }
   #staffContainer {
     @apply w-full m-0 p-0;
     &.hidden {
-      @apply hidden ;
-    }
-
-    #all {
-      @apply md:container w-full mx-auto text-center border border-gray-200 py-2 mb-4 rounded-bl-2xl rounded-br-2xl flex items-center justify-center;
+      @apply hidden;
     }
 
     #staff {
-      @apply grid md:container w-full mx-auto grid-cols-1 md:grid-cols-3 lg:grid-cols-6;
+      @apply grid md:container w-full mx-auto grid-cols-1 md:grid-cols-3 lg:grid-cols-6 md:gap-10 md:gap-2 ;
 
       h2 {
-        @apply text-3xl capitalize text-center border-b my-4 border-black pb-2;
+        @apply text-3xl capitalize text-center pb-2;
       }
 
       .staffMember {
-        @apply flex flex-col w-full border border-gray-200 p-3;
-        &:first-child {
-          @apply rounded-tl-2xl rounded-tr-2xl md:rounded-tr-none
-        }
-
-        &:last-child {
-          @apply lg:rounded-tr-2xl
-        }
-
-        &:nth-child(3) {
-          @apply md:rounded-tr-2xl lg:rounded-tr-none
-        }
+        @apply flex flex-col w-full md:my-4;
 
         .staffPicks {
           @apply w-full flex gap-1;
           div {
-            @apply w-full;
-            p {
-              @apply text-center py-1 border w-full;
+            @apply w-full flex;
+            a {
+              @apply text-center py-1 border w-full hover:text-white;
+
+              &.Taku {
+                @apply hover:bg-orange
+              }
+              &.Ika {
+                @apply hover:bg-blue-500
+              }
+              &.Vati {
+                @apply hover:bg-green-500
+              }
             }
           }
         }
@@ -96,9 +130,6 @@ export default {
 
   }
 
-  #staffHideButton {
-    @apply w-full text-center my-2 py-2
-  }
 }
 
 </style>
