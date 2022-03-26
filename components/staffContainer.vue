@@ -1,5 +1,5 @@
 <template>
-  <div id="staffComponent">
+  <div id="staffComponent" class="hidden">
     <div id="controls">
       <a id="staffHideButton" href="#" @click="toggleStaff">Toggle Staff List</a>
       <a id="all" href="#" @click="chooseFilter"><h2>All</h2></a>
@@ -44,22 +44,27 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('scroll', (ev) => {
-      if (this.active) { return }
-      this.active = true
-      const component = document.body.querySelector('#staffComponent')
-      const container = document.body.querySelector('#contestants')
-      if (window.scrollY === 0) {
-        component.classList.remove('scrolled')
-        container.style.transform = 'translateY(0)'
-      } else if (window.scrollY > 0 && !component.classList.contains('scrolled')) {
-        component.classList.add('scrolled')
-        container.style.transform = `translateY(${component.clientHeight + 16 + 'px'})`
-      }
-      setTimeout(() => {
-        this.active = false
-      }, 10)
-    })
+    const observer = new IntersectionObserver((entry) => {
+      console.log(entry[0].intersectionRect.top)
+    }, { rootMargin: '-184px' })
+
+    observer.observe(document.body.querySelector('.contestant:first-of-type'))
+    // window.addEventListener('scroll', (ev) => {
+    //   if (this.active) { return }
+    //   this.active = true
+    //   const component = document.body.querySelector('#staffComponent')
+    //   const container = document.body.querySelector('#contestants')
+    //   if (window.scrollY === 0) {
+    //     component.classList.remove('scrolled')
+    //     container.style.transform = 'translateY(0)'
+    //   } else if (window.scrollY > 0 && !component.classList.contains('scrolled')) {
+    //     component.classList.add('scrolled')
+    //     container.style.transform = `translateY(${component.clientHeight + 16 + 'px'})`
+    //   }
+    //   setTimeout(() => {
+    //     this.active = false
+    //   }, 10)
+    // })
   },
   methods: {
     chooseFilter (name) {
